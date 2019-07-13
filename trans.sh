@@ -18,6 +18,12 @@ do
     esac
 done
 
+
+LOC=${FILE_NAME%%.*}
+mkdir $LOC
+mv $FILE_NAME ./$LOC
+cd $LOC
+
 # 视频转 DASH manifest
 ffmpeg -hide_banner -y -i $FILE_NAME \
   -c:v libx264 -g 90 -keyint_min 90 -force_key_frames "expr:gte(t,n_forced*3)" \
