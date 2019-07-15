@@ -1,5 +1,6 @@
 #!/bin/sh
 
+cd uploads
 FILE_NAME=""
 OUTPUT_NAME=""
 while getopts "f:o:" arg
@@ -18,7 +19,6 @@ do
     esac
 done
 
-
 LOC=${FILE_NAME%%.*}
 mkdir $LOC
 mv $FILE_NAME ./$LOC
@@ -35,6 +35,6 @@ ffmpeg -hide_banner -y -i $FILE_NAME \
   -b:a:0 64k -c:a:0 aac \
   -b:a:1 128k -c:a:1 aac \
   -use_template 1 -use_timeline 0 -window_size 0 -min_seg_duration 3000000 -single_file 0 -adaptation_sets "id=0,streams=v id=1,streams=a" \
-  -f dash $OUTPUT_NAME
+  -f dash $OUTPUT_NAME | cat
 
 echo "finished."
