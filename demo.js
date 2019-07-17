@@ -18,6 +18,26 @@ var upload = multer({storage});
 
 var app = express();
 
+var mysql = require('mysql');
+var connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'sws3021t2_admin',
+    password: 'U3o-V2q-A8n',
+    database: 'sws3021t2'
+});
+
+var insert = (uuid, outname) => {
+    var insert_sql = 'INSERT INTO name(uuid, name) VALUES(?, ?)';
+    var insert_sql_params = [uuid, outname];
+    connection.query(insert_sql, insert_sql_params, (err, result) => {
+        if(err){
+            console.log('[INSERT ERROR] -', err.message);
+            return;
+        }
+        console.log(result);
+    });
+}
+
 var transform = (filename, outname) => {
     var loc = filename.split('.')[0];
     fs.mkdir('uploads/' + loc);
@@ -60,20 +80,3 @@ var transform = (filename, outname) => {
     .run();
 
 };
-
-app.post('/upload_video', upload.single('upload'), function(req, res, next){
-    console.log('begin post function');
-    var filename = req.file.filename;
-    var outname = req.file.originalname.split('.')[0]+'.mpd';
-    transform(filename, outname);
-    var url="http://137.132.92.142:8000/lsc/uploads/"+filename.split('.')[0]+"/"+outname;
-    res.json({url:url});
-});
-
-app.get('/', function (req, res) {
-    res.sendFile( __dirname + "/" + "up_video.html" );
-});
-
-var server = app.listen(8081, function () {
-    console.log("running...");
-});
